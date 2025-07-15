@@ -32,6 +32,7 @@ jobs:
           git commit -m "Bump version to ${{ steps.bump.outputs.new_version }}"
           git push
           git tag -f latest
+          git push -f --tags
 
   build:
     needs: prepare
