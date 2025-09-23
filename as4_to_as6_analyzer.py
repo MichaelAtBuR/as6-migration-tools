@@ -9,6 +9,7 @@ from utils import utils
 
 
 def parse_args():
+
     parser = argparse.ArgumentParser(
         prog=os.path.basename(__file__),
         description="Scans Automation Studio project for transition from AS4 to AS6",
