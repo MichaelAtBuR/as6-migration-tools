@@ -42,20 +42,20 @@ def check_hardware(physical_path, log, verbose=False):
     )
 
     if hardware_results:
-        log(
-            "The following unsupported hardware were found:",
-            when="AS4",
-            severity="WARNING",
-        )
+        output = "The following unsupported hardware were found:"
         grouped_results = {}
         for hardware_id, reason, file_path in hardware_results:
             config_name = os.path.basename(os.path.dirname(file_path))
-            grouped_results.setdefault(config_name, set()).add((hardware_id, reason))
+            grouped_results.setdefault(hardware_id, {"reason": reason, "configs": []})
+            grouped_results[hardware_id]["configs"].append(config_name)
 
-        for config_name, entries in grouped_results.items():
-            log(f"\nHardware configuration: {config_name}")
-            for hardware_id, reason in sorted(entries):
-                log(f"- {hardware_id}: {reason}")
+        for hardware_id, entries in grouped_results.items():
+            output += f"\n\n- {hardware_id}: {entries['reason']}"
+            output += f"\n  Used in configurations: {', '.join(sorted(entries['configs'][:3]))}"
+            if len(entries["configs"]) > 3:
+                output += f", and {len(entries['configs']) - 3} more..."
+
+        log(output, when="AS4", severity="WARNING")
     else:
         if verbose:
             log("No unsupported hardware found in the project.", severity="INFO")
